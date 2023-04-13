@@ -1,3 +1,5 @@
+"""Ex1 warriors and random hit."""
+
 from __future__ import annotations
 from time import sleep
 from secrets import randbelow

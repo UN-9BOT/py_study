@@ -12,13 +12,17 @@ class Person:
         self.__lvl: int = lvl
 
     def __del__(self) -> None:
-        """For del 1 units."""
-        print(f"Goodbye {self.__name} {self.__sname}")
+        """For del 1 unit."""
+        print(f"Goodbye {self.__name} {self.__sname} {self.__lvl}")
         del self
 
     def getInfo(self) -> str:
         """Get info."""
         return f"{self.__name}, {self.__sname}, {self.__lvl}"
+
+    def getLvl(self) -> int:
+        """Get lvl for 1 unit."""
+        return self.__lvl
 
 
 def main() -> None:
@@ -28,11 +32,14 @@ def main() -> None:
         Person("Beely", "Switherman", randbelow(5)),
         Person("Kelly", "Leinman", randbelow(5)),
     ]
-    
-    lowUn: Person = un[0]
+
+    lowUn: Person = units[0]
     for un in units:
-        if 
-        
+        if un.getLvl() < lowUn.getLvl():
+            lowUn = un
+
+    print(f"Слабое звено - {lowUn.getInfo()}")
+    lowUn.__del__()
 
 
 if __name__ == "__main__":
