@@ -52,7 +52,7 @@ class Pupil:
         """For append knowledge list in object."""
         self.knowledges.append(info)
 
-    def self_study(self, info: str):
+    def self_study(self, info: str) -> None:
         """Self-study for kids. Just append."""
         self.knowledges.append(info)
 
