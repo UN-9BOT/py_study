@@ -4,8 +4,8 @@ from pydantic import PositiveInt
 from typing import Iterator
 
 
-def rand_int_gen(count: PositiveInt,
-                 min_num: int, max_num: int) -> Iterator[int]:
+def rand_int_gen(count: PositiveInt, min_num: int,
+                 max_num: int) -> Iterator[int]:
     """Func Generator."""
     if count <= 0:
         raise ValueError("Count must be a positive integer")
