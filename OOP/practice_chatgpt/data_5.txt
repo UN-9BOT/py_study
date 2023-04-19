@@ -1,0 +1,10 @@
+This is a sample file for parsing.
+
+# This is a comment line.
+# Another comment line.
+
+John 25 Developer
+Mary 32 CEO
+Sam 45 CEO
+
+# End of file.
