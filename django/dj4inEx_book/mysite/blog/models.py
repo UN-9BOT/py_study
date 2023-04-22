@@ -1,8 +1,10 @@
 """This module for standart models this app."""
 from django.db.models import (
     CASCADE,
+    BooleanField,
     CharField,
     DateTimeField,
+    EmailField,
     ForeignKey,
     Index,
     Manager,
@@ -38,7 +40,7 @@ class Post(Model):
         PUBLISHED = "PB", "Published"
 
     title: CharField = CharField(max_length=250)
-    slug: SlugField = SlugField(max_length=250, unique_for_date='publish')
+    slug: SlugField = SlugField(max_length=250, unique_for_date="publish")
     author: ForeignKey = ForeignKey(
         User, on_delete=CASCADE, related_name="blog_posts")
     body: TextField = TextField(max_length=250)
@@ -55,13 +57,40 @@ class Post(Model):
         ordering = ["-publish"]
         indexes = [Index(fields=["-publish"])]
 
-    def __str__(self) -> str:
+    def __str__(self):
         """Overload literal this model."""
         return self.title
 
     def get_absolute_url(self):
         """Resolve."""
-        return reverse("blog:post_detail", args=[self.publish.year,
-                                                 self.publish.month,
-                                                 self.publish.day,
-                                                 self.slug])
+        return reverse(
+            "blog:post_detail",
+            args=[
+                self.publish.year,
+                self.publish.month,
+                self.publish.day,
+                self.slug],
+        )
+
+
+class Comment(Model):
+    """The model for comments in post."""
+
+    post: ForeignKey = ForeignKey(
+        Post, on_delete=CASCADE, related_name="comments")
+    name: CharField = CharField(max_length=80)
+    email: EmailField = EmailField()
+    body: TextField = TextField()
+    created: DateTimeField = DateTimeField(auto_now_add=True)
+    updated: DateTimeField = DateTimeField(auto_now=True)
+    active: BooleanField = BooleanField()
+
+    class Meta:
+        """Metadata for db."""
+
+        ordering = ["created"]
+        indexes = [Index(fields=["created"])]
+
+    def __str__(self) -> str:
+        """Overload."""
+        return f"Comment by {self.name} on {self.post}"
