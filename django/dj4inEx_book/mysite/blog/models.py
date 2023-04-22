@@ -5,7 +5,9 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     Index,
+    Manager,
     Model,
+    QuerySet,
     SlugField,
     TextChoices,
     TextField,
@@ -14,8 +16,19 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class PublishedManager(Manager):
+    """Manager for published post."""
+
+    def get_queryset(self) -> QuerySet:
+        """Overload."""
+        return super().get_queryset().filter(status=Post.Status.PUBLISHED)
+
+
 class Post(Model):
     """The model for posts in blog."""
+
+    objects: Manager = Manager()
+    published: PublishedManager = PublishedManager()
 
     class Status(TextChoices):
         """For statuses in post."""
@@ -32,9 +45,8 @@ class Post(Model):
     created: DateTimeField = DateTimeField(auto_now_add=True)
     updated: DateTimeField = DateTimeField(auto_now=True)
     status: CharField = CharField(
-        max_length=2,
-        choices=Status.choices,
-        default=Status.DRAFT)
+        max_length=2, choices=Status.choices, default=Status.DRAFT
+    )
 
     class Meta:
         """Metadata for db."""
