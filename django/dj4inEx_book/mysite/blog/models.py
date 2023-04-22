@@ -14,6 +14,7 @@ from django.db.models import (
 )
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.urls import reverse
 
 
 class PublishedManager(Manager):
@@ -37,7 +38,7 @@ class Post(Model):
         PUBLISHED = "PB", "Published"
 
     title: CharField = CharField(max_length=250)
-    slug: SlugField = SlugField(max_length=250)
+    slug: SlugField = SlugField(max_length=250, unique_for_date='publish')
     author: ForeignKey = ForeignKey(
         User, on_delete=CASCADE, related_name="blog_posts")
     body: TextField = TextField(max_length=250)
@@ -57,3 +58,10 @@ class Post(Model):
     def __str__(self) -> str:
         """Overload literal this model."""
         return self.title
+
+    def get_absolute_url(self):
+        """Resolve."""
+        return reverse("blog:post_detail", args=[self.publish.year,
+                                                 self.publish.month,
+                                                 self.publish.day,
+                                                 self.slug])
