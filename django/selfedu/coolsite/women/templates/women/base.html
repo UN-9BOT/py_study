@@ -1,0 +1,30 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <meta name="description" content="Quiz">
+</head>
+<header>
+    <nav>
+        <ul class="nav">
+            {% block navbar %}
+            {% endblock %}
+        </ul>
+    </nav>
+</header>
+
+<body>
+    <main>
+        <div class="main_wrapper">
+            {% block content %}
+            {% endblock %}
+            {% block javascript %}
+            {% endblock %}
+        </div>
+    </main>
+    <aside>
+    </aside>
+
+</body>
+
+</html>

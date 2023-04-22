@@ -1,5 +1,5 @@
 """
-URL configuration for app project.
+URL configuration for coolsite project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -14,17 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from typing import Callable
 from django.contrib import admin
-from django.http import HttpResponseNotFound
-from django.urls import URLPattern, URLResolver, include, path
+from django.urls import include, path
+from women.views import index
 
-from quiz.views import page_not_found
-
-
-urlpatterns: list[URLResolver | URLPattern] = [
+urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("quiz.urls"))
+    path("", include("women.urls")),
 ]
-
-handler404: Callable[..., HttpResponseNotFound] = page_not_found
