@@ -1,53 +1,42 @@
 """This module for standart models this app."""
-from django.db.models import (
-    CASCADE,
-    BooleanField,
-    CharField,
-    DateTimeField,
-    EmailField,
-    ForeignKey,
-    Index,
-    Manager,
-    Model,
-    QuerySet,
-    SlugField,
-    TextChoices,
-    TextField,
-)
+from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.urls import reverse
 
 
-class PublishedManager(Manager):
+class PublishedManager(models.Manager):
     """Manager for published post."""
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self) -> models.QuerySet:
         """Overload."""
         return super().get_queryset().filter(status=Post.Status.PUBLISHED)
 
 
-class Post(Model):
+class Post(models.Model):
     """The model for posts in blog."""
 
-    objects: Manager = Manager()
+    objects: models.Manager = models.Manager()
     published: PublishedManager = PublishedManager()
 
-    class Status(TextChoices):
+    class Status(models.TextChoices):
         """For statuses in post."""
 
         DRAFT = "DF", "Draft"
         PUBLISHED = "PB", "Published"
 
-    title: CharField = CharField(max_length=250)
-    slug: SlugField = SlugField(max_length=250, unique_for_date="publish")
-    author: ForeignKey = ForeignKey(
-        User, on_delete=CASCADE, related_name="blog_posts")
-    body: TextField = TextField(max_length=250)
-    publish: DateTimeField = DateTimeField(default=timezone.now)
-    created: DateTimeField = DateTimeField(auto_now_add=True)
-    updated: DateTimeField = DateTimeField(auto_now=True)
-    status: CharField = CharField(
+    title: models.CharField = models.CharField(max_length=250)
+    slug: models.SlugField = models.SlugField(
+        max_length=250, unique_for_date="publish"
+    )
+    author: models.ForeignKey = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="blog_posts"
+    )
+    body: models.TextField = models.TextField(max_length=250)
+    publish: models.DateTimeField = models.DateTimeField(default=timezone.now)
+    created: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated: models.DateTimeField = models.DateTimeField(auto_now=True)
+    status: models.CharField = models.CharField(
         max_length=2, choices=Status.choices, default=Status.DRAFT
     )
 
@@ -55,13 +44,13 @@ class Post(Model):
         """Metadata for db."""
 
         ordering = ["-publish"]
-        indexes = [Index(fields=["-publish"])]
+        indexes = [models.Index(fields=["-publish"])]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Overload literal this model."""
         return self.title
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         """Resolve."""
         return reverse(
             "blog:post_detail",
@@ -69,27 +58,29 @@ class Post(Model):
                 self.publish.year,
                 self.publish.month,
                 self.publish.day,
-                self.slug],
+                self.slug,
+            ],
         )
 
 
-class Comment(Model):
+class Comment(models.Model):
     """The model for comments in post."""
 
-    post: ForeignKey = ForeignKey(
-        Post, on_delete=CASCADE, related_name="comments")
-    name: CharField = CharField(max_length=80)
-    email: EmailField = EmailField()
-    body: TextField = TextField()
-    created: DateTimeField = DateTimeField(auto_now_add=True)
-    updated: DateTimeField = DateTimeField(auto_now=True)
-    active: BooleanField = BooleanField()
+    post: models.ForeignKey = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name="comments"
+    )
+    name: models.CharField = models.CharField(max_length=80)
+    email: models.EmailField = models.EmailField()
+    body: models.TextField = models.TextField()
+    created: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated: models.DateTimeField = models.DateTimeField(auto_now=True)
+    active: models.BooleanField = models.BooleanField()
 
     class Meta:
         """Metadata for db."""
 
         ordering = ["created"]
-        indexes = [Index(fields=["created"])]
+        indexes = [models.Index(fields=["created"])]
 
     def __str__(self) -> str:
         """Overload."""

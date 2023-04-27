@@ -41,13 +41,16 @@ def post_detail(request, year, month, day, post) -> HttpResponse:
         publish__month=month,
         publish__day=day,
     )
-    context: dict = {"post": post}
+    context: dict = {
+        "post": post,
+        "comments": post.comments.filter(active=True),
+    }
 
     return render(request, "blog/post/detail.html", context=context)
 
 
 @require_POST
-def post_comment(request, post_id) -> HttpResponse:
+def post_comment(request, post_id: int) -> HttpResponse:
     """View for 1 comment in post."""
     post = get_object_or_404(Post, id=post_id, status=Post.Status.PUBLISHED)
     form = CommentForm(data=request.Post)
