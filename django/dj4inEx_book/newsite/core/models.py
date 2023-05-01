@@ -12,6 +12,13 @@ class PublishedManager(models.Manager):
         """Overload."""
         return super().get_queryset().filter(status=Post.Status.PUBLISHED)
 
+class CommentrueManager(models.Manager):
+    """Manager for comment with status True."""
+
+    def get_queryset(self) -> models.QuerySet:
+        """Overload."""
+        return super().get_queryset().filter(active=True)
+
 
 class Post(models.Model):
     """Model for post in blog."""
@@ -54,3 +61,27 @@ class Post(models.Model):
                                                  self.publish.month,
                                                  self.publish.day,
                                                  self.slug])
+
+
+class Comment(models.Model):
+    """View for comment under the post."""
+
+    post: models.ForeignKey = models.ForeignKey(Post,
+                             on_delete=models.CASCADE,
+                             related_name='comments')
+    name: models.CharField = models.CharField(max_length=80)
+    body: models.TextField = models.TextField()
+    created: models.DateTimeField = models.DateTimeField(auto_now_add=True)
+    updated: models.DateTimeField = models.DateTimeField(auto_now=True)
+    active: models.BooleanField = models.BooleanField(default=True)
+    commentrue = CommentrueManager()
+
+    class Meta:
+        """Metadata for db."""
+
+        ordering = ["created"]
+        indexes = [models.Index(fields=["created"])]
+
+    def __str__(self) -> str:
+        """Overload."""
+        return f"Comment by {self.name} on {self.post}"
